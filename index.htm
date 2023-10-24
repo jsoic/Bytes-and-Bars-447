@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="http://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+<!-- Create an element where the map will take place -->
+<p1></p1>
+<svg id="my_dataviz" width="1500" height="900"></svg>
+
+<script>
+    // The svg
+    var svg = d3.select("svg"),
+      width = +svg.attr("width"),
+      height = +svg.attr("height");
+    
+    // Map and projection
+    var path = d3.geoPath();
+    var projection = d3.geoMercator()
+      .scale(175)
+      .center([0,20])
+      .translate([width/2, height/2]);
+    
+    // Data and color scale
+    var internetData = d3.map();
+    var internetDataDict;
+    var colorScale = d3.scaleThreshold()
+      .domain([0, 1000000, 10000000, 25000000, 50000000, 75000000, 100000000, 500000000])
+      .range(d3.schemeReds[9]);
+    
+    // Load external data and boot
+    d3.queue()
+      .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+      .defer(d3.csv, "number-of-internet-users-by-country.csv", function(d) {internetData.set(d.code, {"name":d.name, "amount": d.amount, "year":d.year});})
+      //.defer(d3.json, "internetUsers.json", function(d) {console.log(d)})
+      .await(ready);
+    
+
+    function ready(error, topo) {
+      console.log(internetDataDict)
+      let mouseOver = function(d) {
+        d3.selectAll(".Country")
+          .transition()
+          .duration(50)
+          .style("opacity", .5)
+        d3.select(this)
+          .transition()
+          .duration(50)
+          .style("opacity", 1)
+          .style("stroke", "black")
+          
+          //Tooltip - WIP
+          tip.style("opacity", 1)
+          .html(internetData.get(d.id)["name"] + " " + internetData.get(d.id)["amount"] )
+          .style("left", (d3.event.pageX-25) + "px")
+          .style("top", (d3.event.pageY-75) + "px")
+      }
+    
+      let mouseLeave = function(d) {
+        d3.selectAll(".Country")
+          .transition()
+          .duration(50)
+          .style("opacity", .8)
+          .style("stroke", "grey")
+        d3.select(this)
+          .transition()
+          .duration(50)
+          .style("stroke", "grey")
+          
+          //Tooltip - WIP
+          tip.style("opacity", 0)
+      }
+
+      // Define the div for the tooltip
+      var tip = d3.select("p1").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+
+      // Draw the map
+      svg.append("g")
+        .selectAll("path")
+        .data(topo.features) //sets the "d" variable to be topo.features for this function
+        .enter()
+        .append("path")
+          // draw each country
+          .attr("d", d3.geoPath()
+            .projection(projection)
+          )
+          // set the color of each country
+          .attr("fill", function (d) {
+            try {
+              d.total = internetData.get(d.id)["amount"] || 0; //Using the id from topo.features to match entry in popValueData dictonary for pop value
+            }
+            catch {d.total = 0}
+            console.log(d.total + " " + d.id)
+            return colorScale(d.total);
+          })
+          .style("stroke", "grey")
+          .attr("class", function(d){ return "Country" } )
+          .style("opacity", .8)
+          .on("mouseover", mouseOver )
+          .on("mouseleave", mouseLeave )
+        }
+    
+    </script>
