@@ -11,15 +11,9 @@
 <input type="text" id="myText" value="year">
 <button onclick="myFunction()">Try it</button>
 <p1></p1>
-<svg id="my_dataviz" width="1500" height="900"></svg>
+<svg id="my_dataviz" width="1700" height="875"></svg>
 
 <script>
-    var x = 2016
-    function myFunction() {
-    x = document.getElementById("myText").value;
-    ready(null, topoData)
-    }
-
     // The svg
     var svg = d3.select("svg"),
       width = +svg.attr("width"),
@@ -50,6 +44,12 @@
       valueData = await d3.json("values.json")
       ready(null, topoData);
     }
+
+    var x = 2016;
+    function myFunction() {
+      x = document.getElementById("myText").value;
+      ready(null, topoData)
+    }
     
     function ready(error, topo) {
 
@@ -63,23 +63,21 @@
           .duration(50)
           .style("opacity", 1)
           .style("stroke", "black")
-          
+        
           //Tooltip - WIP
-          
-          try {
-            tip.style("opacity", 1)
-            .html(nameData[d.id] + " " + valueData[d.id][x])
-            .style("left", (d3.event.pageX-25) + "px")
-            .style("top", (d3.event.pageY-75) + "px")
-          }
-          catch {
-            tip.style("opacity", 1)
+        try{
+          tip.style("opacity", 1)
+          .html(nameData[d.id] + " " + valueData[d.id][2016])
+          .style("left", (d3.event.pageX-25) + "px")
+          .style("top", (d3.event.pageY-75) + "px")
+        }
+        catch { 
+           tip.style("opacity", 1)
             .html("No data avaliable")
             .style("left", (d3.event.pageX-25) + "px")
             .style("top", (d3.event.pageY-75) + "px")
-          }
-         
-          
+        }
+
       }
     
       let mouseLeave = function(d) {
@@ -102,8 +100,6 @@
       .attr("class", "tooltip")
       .style("opacity", 0)
 
-
-
       // Draw the map
       svg.append("g")
         .selectAll("path")
@@ -114,20 +110,19 @@
           .attr("d", d3.geoPath()
             .projection(projection)
           )
-
+          
           // set the color of each country
           .attr("fill", function (d) {
             try {
               d.total = valueData[d.id][x]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
+              return colorScale(d.total);
             }
             catch {
-              //Value is set to zero if no data is found for that country
-              d.total = 0
+              //Value is set to -1 if no data is found for that country
+              d.total = -1
               return "#000000"
             }
-            return colorScale(d.total);
           })
-
 
           .style("stroke", "grey")
           .attr("class", function(d){ return "Country" } )
@@ -135,5 +130,6 @@
           .on("mouseover", mouseOver )
           .on("mouseleave", mouseLeave )
         }
+        
     
     </script>
