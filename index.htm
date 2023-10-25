@@ -46,8 +46,8 @@
     queue()
     async function queue() {
       topoData = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-      nameData = await d3.json("names.json")
-      valueData = await d3.json("values.json")
+      nameData = await d3.json("./jsonFiles/countryCodeMapper.json")
+      valueData = await d3.json("./jsonFiles/internetUsageTemp.json")
       ready(null, topoData);
     }
     
