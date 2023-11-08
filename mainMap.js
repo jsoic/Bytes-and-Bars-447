@@ -34,7 +34,9 @@ async function loadData() {
     displayMap(topographicalData);
 }
 
-//TODO//FIXME: Turn this into a year slider based on years avaliable
+
+//TODO: Turn this into a year slider based on years avaliable 
+//FIXME: bug where changing years messes up highlight background fading
 var x = 2016;
 function myFunction() {
  x = document.getElementById("myText").value;
@@ -42,87 +44,93 @@ function myFunction() {
 }
 
 
+/* Mouse movement over the map */
+//Hover variables
+var transitionDuration = 50;
+var defaultOpacity = 1;
+var selectedOpacity = 1;
+var backgroundOpacity = 0.6;
+
+// Define the tooltip
+var tooltipJS = document.getElementById('tooltip');
+var tooltip = d3.select("#tooltip")
+.attr("class", "tooltip")
+.style("opacity", 0)
+
+//Tracking mouse position
+var placeTooltip = function(e) {
+    tooltipJS.style.top = (e.clientY + 20) + 'px';
+    tooltipJS.style.left = (e.clientX + 20) + 'px';
+}
+
+let mouseOver = function(d) {
+    document.getElementById("my_dataviz").addEventListener('mousemove', placeTooltip);
+    document.getElementById("my_dataviz").style.cursor = "pointer";
+    
+    d3.selectAll(".Country")
+        .transition()
+        .duration(transitionDuration)
+        .style("opacity", backgroundOpacity)
+        .style("stroke", "grey")
+    d3.select(this)
+        .transition()
+        .duration(transitionDuration)
+        .style("opacity", selectedOpacity)
+        .style("stroke", "black")
+    
+    tooltip.style("opacity", 1)
+    countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id])
+}
+
+let mouseLeave = function(d) {
+    document.getElementById("my_dataviz").removeEventListener('mousemove', placeTooltip);
+    document.getElementById("my_dataviz").style.cursor = "default";
+
+    d3.selectAll(".Country")
+        .transition()
+        .duration(transitionDuration)
+        .style("opacity", defaultOpacity)
+    d3.select(this)
+        .transition()
+        .duration(transitionDuration)
+        .style("stroke", "grey")
+        .style("opacity", defaultOpacity)
+        
+    tooltip.style("opacity", 0)
+}
+
+
+
 function displayMap(topoData) {
+// Draw the map //TODO: Clean & organize this code
+    svg.append("g")
+    .selectAll("path")
+    .data(topoData.features) //sets the "d" variable to be topo.features for this function
+    .enter()
+    .append("path")
+        // draw each country
+        .attr("d", d3.geoPath()
+        .projection(projection)
+        )
+        
+        // set the color of each country
+        .attr("fill", function (d) {
+        try {
+            d.total = valueData[d.id][x]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
+            return colorScale(d.total);
+        }
+        catch {
+            //White is returned if no data is found for that country
+            return "#fff"
+        }
+        })
 
- let mouseOver = function(d) { //FIXME: Look though mouseOver and mouseLeave and clean up 
-   d3.selectAll(".Country")
-     .transition()
-     .duration(50)
-     .style("opacity", .5)
-     .style("stroke", "grey")
-   d3.select(this)
-     .transition()
-     .duration(50)
-     .style("opacity", 1)
-     .style("stroke", "black")
-   
-     //Tooltip - WIP //TODO: Implement working tool tip in correct position that just displays country name
-   try{
-     tip.style("opacity", 1)
-     .html(countryNameData[d.id] + " " + valueData[d.id][2016])
-     .style("left", (d3.event.pageX-25) + "px")
-     .style("top", (d3.event.pageY-75) + "px")
-   }
-   catch { 
-      tip.style("opacity", 1)
-       .html("No data avaliable")
-       .style("left", (d3.event.pageX-25) + "px")
-       .style("top", (d3.event.pageY-75) + "px")
-   }
-
- }
-
- let mouseLeave = function(d) {
-   d3.selectAll(".Country")
-     .transition()
-     .duration(50)
-     .style("opacity", .8)
-     .style("stroke", "grey")
-   d3.select(this)
-     .transition()
-     .duration(50)
-     .style("stroke", "grey")
-     
-     //Tooltip - WIP
-     tip.style("opacity", 0)
- }
-
- // Define the div for the tooltip
- var tip = d3.select("p1").append("div")
- .attr("class", "tooltip")
- .style("opacity", 0)
-
-
- // Draw the map //TODO: Clean and funtionize this code
- svg.append("g")
-   .selectAll("path")
-   .data(topoData.features) //sets the "d" variable to be topo.features for this function
-   .enter()
-   .append("path")
-     // draw each country
-     .attr("d", d3.geoPath()
-       .projection(projection)
-     )
-     
-     // set the color of each country
-     .attr("fill", function (d) {
-       try {
-         d.total = valueData[d.id][x]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
-         return colorScale(d.total);
-       }
-       catch {
-         //Value is set to -1 if no data is found for that country
-         d.total = -1
-         return "#fff"
-       }
-     })
-
-     .style("stroke", "grey")
-     .attr("class", function(d){ return "Country" } )
-     .style("opacity", .8)
-     .on("mouseover", mouseOver )
-     .on("mouseleave", mouseLeave )
-   }
+        .style("stroke", "grey")
+        .attr("class", function(d){ return "Country" } )
+        .style("opacity", defaultOpacity)
+        .on("mouseover", mouseOver )
+        .on("mouseleave", mouseLeave )
+}
 
 /* Calling the function to load the data (Kicking everything off) */
 loadData()
