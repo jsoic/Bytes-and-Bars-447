@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="pageStyles.css">
-    <link rel="stylesheet" href="mapStyles.css">
+    <link rel="stylesheet" href="./pageStyles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <!-- Load d3.js -->
@@ -17,7 +16,7 @@
 <body>
     <!-- Page Heading -->
     <div class="GENERAL_FORMATTING title">
-        <h1>Internet Usage & Correlations Around the World</h1>
+        <h1>Internet Usage & Correlations Around the World 2000-2016</h1>
     </div>
 
     <!-- Map & Data Displays -->
@@ -26,9 +25,17 @@
         <svg class="map" id="my_dataviz"></svg>
     </div>
     
-    <div class="timeline"></div> <!-- TODO: Add timeline slider that controls what year of data is displayed-->
-    <input type="text" id="myText" value="year">
-    <button onclick="myFunction()">Try it</button>
+    <div class="GENERAL_FORMATTING timeline">
+        <!-- FIXME: Clean up timeline slider to look better-->
+        <div id="sliderWrapper" class="slider">
+            <!--<label for="yearSlider">Year</label>-->
+            <datalist id="yearList"></datalist>
+            <input id="yearSlider" type="range" list="yearList" onclick="changeYear()">
+           
+        </div> 
+   
+
+    </div> 
     
     <!-- TODO: Add copywrite stuff and general page footer-->
 

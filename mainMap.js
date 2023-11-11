@@ -26,21 +26,49 @@ var colorScale = d3.scaleThreshold()
 var topographicalData, countryNameData;
 //TODO: Add other internet data
 var valueData; //FIXME: Rename to something more helpful once other data is added
+var selectedYear = 2016;
 
 async function loadData() {
     topographicalData = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     countryNameData = await d3.json("./jsonFiles/countryCodeMapper.json")
     valueData = await d3.json("./jsonFiles/internetUsageTemp.json")
-    displayMap(topographicalData);
+    displayMap(topographicalData, selectedYear);
 }
 
 
-//TODO: Turn this into a year slider based on years avaliable 
+
 //FIXME: bug where changing years messes up highlight background fading
-var x = 2016;
-function myFunction() {
- x = document.getElementById("myText").value;
- displayMap(topographicalData)
+/* Year slider */
+var minYear = 2000;
+var maxYear = 2016;
+function setupSlider() {
+    var usableYears = []
+    for(i = minYear; i < maxYear+1; i++) {usableYears.push(i);}
+
+    var yearList = document.getElementById("yearList");
+    for (year of usableYears) {
+        var node = document.createElement("option");
+        node.innerHTML = year;
+        yearList.appendChild(node);
+    }
+    
+    var slider = document.getElementById("yearSlider");
+    slider.setAttribute("min", minYear);
+    slider.setAttribute("max", maxYear);
+    slider.setAttribute("value", selectedYear);
+
+    document.getElementById("sliderWrapper").style.setProperty("--min", minYear);
+    document.getElementById("sliderWrapper").style.setProperty("--max", maxYear);
+}
+
+
+function changeYear() {   
+    var newYear = document.getElementById("yearSlider").value;
+    //console.log(newYear)
+    if(newYear != selectedYear) {
+        selectedYear = newYear;
+        displayMap(topographicalData, newYear);
+    }   
 }
 
 
@@ -99,10 +127,8 @@ let mouseLeave = function(d) {
     tooltip.style("opacity", 0)
 }
 
-
-
-function displayMap(topoData) {
-// Draw the map //TODO: Clean & organize this code
+function displayMap(topoData, year) {
+    // Draw the map
     svg.append("g")
     .selectAll("path")
     .data(topoData.features) //sets the "d" variable to be topo.features for this function
@@ -116,12 +142,11 @@ function displayMap(topoData) {
         // set the color of each country
         .attr("fill", function (d) {
         try {
-            d.total = valueData[d.id][x]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
+            d.total = valueData[d.id][year]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
             return colorScale(d.total);
         }
         catch {
-            //White is returned if no data is found for that country
-            return "#fff"
+            return "#fff" //White is returned if no data is found for that country
         }
         })
 
@@ -132,5 +157,7 @@ function displayMap(topoData) {
         .on("mouseleave", mouseLeave )
 }
 
+
 /* Calling the function to load the data (Kicking everything off) */
+setupSlider()
 loadData()
