@@ -18,19 +18,20 @@ var projection = d3.geoNaturalEarth1()
 /* Color scale */
 //var internetData = d3.map();
 var colorScale = d3.scaleThreshold()
- .domain([0, 1000000, 10000000, 25000000, 50000000, 75000000, 100000000, 500000000]) //TODO: Find min & max for the selected year and adjust scale based on that
- .range(d3.schemeReds[9]);
+ .domain([0.2, 0.4, 0.6, 0.8]) //TODO: Find min & max for the selected year and adjust scale based on that
+ .range(d3.schemeReds[5]);
 
 
  /* Load external data and boot */
 var topographicalData, countryNameData;
 //FIXME: Add other internet data in side bars
-var internetUsageByCountry;
+var internetUsageByCountry, populationByCountry;
 var selectedYear = 2000;
 
 async function loadData() {
     topographicalData = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     countryNameData = await d3.json("./jsonFiles/countryCodeMapper.json")
+    populationByCountry = await d3.json("./jsonFiles/countryPopulation.json")
     internetUsageByCountry = await d3.json("./jsonFiles/internetUsageTemp.json")
     displayMap(topographicalData, selectedYear);
 }
@@ -142,11 +143,6 @@ function displayMap(topoData, year) {
     console.log(minAmount)
 
 
-
-
-    //console.log(maxAmount)
-
-
     // Draw the map
     svg.append("g")
     .selectAll("path")
@@ -161,8 +157,11 @@ function displayMap(topoData, year) {
         // set the color of each country
         .attr("fill", function (d) {
         try {
-            d.total = internetUsageByCountry[d.id][year]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
-            return colorScale(d.total);
+            d.total = internetUsageByCountry[d.id][year]/populationByCountry[d.id][year]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
+            console.log(d.id, internetUsageByCountry[d.id][year]/populationByCountry[d.id][year])
+            if (!isNaN(d.total)) {return colorScale(d.total);}
+            return "#fff"
+                
         }
         catch {
             return "#fff" //White is returned if no data is found for that country
