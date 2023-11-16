@@ -9,24 +9,22 @@ width = +svg.attr("width");
 height = +svg.attr("height");
 
 /* Map and projection */
-//var path = d3.geoPath();
 var projection = d3.geoNaturalEarth1()
  .scale(height/2.80)
  .center([0,1])
  .translate([width/2, height/2]);
 
 /* Color scale */
-//var internetData = d3.map();
 var colorScale = d3.scaleThreshold()
- .domain([0.2, 0.4, 0.6, 0.8]) //TODO: Find min & max for the selected year and adjust scale based on that
- .range(d3.schemeReds[5]);
+ .domain([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+ .range(d3.schemeReds[9]);
 
 
  /* Load external data and boot */
 var topographicalData, countryNameData;
 //FIXME: Add other internet data in side bars
 var internetUsageByCountry, populationByCountry;
-var selectedYear = 2000;
+var selectedYear = 2016;
 
 async function loadData() {
     topographicalData = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
@@ -37,8 +35,6 @@ async function loadData() {
 }
 
 
-
-//FIXME: bug where changing years messes up highlight background fading
 /* Year slider */
 var minYear = 2000;
 var maxYear = 2016;
@@ -62,12 +58,11 @@ function setupSlider() {
     document.getElementById("sliderWrapper").style.setProperty("--max", maxYear);
 }
 
-
 function changeYear() {   
     var newYear = document.getElementById("yearSlider").value;
-    //console.log(newYear)
     if(newYear != selectedYear) {
         selectedYear = newYear;
+        svg.selectAll("*").remove();
         displayMap(topographicalData, newYear);
     }   
 }
@@ -129,21 +124,8 @@ let mouseLeave = function(d) {
 }
 
 function displayMap(topoData, year) {
-    //Set up color scale
-
-    var maxAmount = internetUsageByCountry["AFG"][year] || internetUsageByCountry["USA"][year];
-    var minAmount = internetUsageByCountry["AFG"][year] || internetUsageByCountry["USA"][year];
-    
-    for (code of Object.keys(internetUsageByCountry)) {
-        var selected = internetUsageByCountry[code][year]
-        if(selected > maxAmount){maxAmount = selected;}
-        if(selected < minAmount){minAmount = selected;}
-    }
-    console.log(maxAmount)
-    console.log(minAmount)
-
-
     // Draw the map
+    
     svg.append("g")
     .selectAll("path")
     .data(topoData.features) //sets the "d" variable to be topo.features for this function
@@ -158,10 +140,8 @@ function displayMap(topoData, year) {
         .attr("fill", function (d) {
         try {
             d.total = internetUsageByCountry[d.id][year]/populationByCountry[d.id][year]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
-            console.log(d.id, internetUsageByCountry[d.id][year]/populationByCountry[d.id][year])
             if (!isNaN(d.total)) {return colorScale(d.total);}
             return "#fff"
-                
         }
         catch {
             return "#fff" //White is returned if no data is found for that country
