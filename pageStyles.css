@@ -1,5 +1,5 @@
 /* Reset some default styles to ensure consistency */
-body, h1, h3 {
+body, h1, h2, h3 {
     margin: 0;
     padding: 0;
 }
@@ -19,12 +19,41 @@ header {
     margin: 1rem 0 1rem 0;
 }
 
+.SIDE_BAR {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 74vh;
+    width: 10vw;
+    margin: 0vw 1vw;
+    border: #000 solid 0.15rem;
+    padding: 0.5vw
+}
+
+/*.left_side_bar {
+
+}*/
+.left_side_bar h2 {
+    text-decoration: underline;
+}
+
+.left_side_bar p {
+    margin: 0.5rem 1rem;
+    padding: 0;
+    font-size: x-large;
+    height: 5vh;
+}
+
+.countrySlot { /* FIXME: Seperate out the hight from the paragraph section above so that each one can be a seperate height and I can make country taller than the rest*/
+    height: 10vh;
+}
+
 /*.title {
     
 }*/
 
 .map {
-    border: solid 1px #000;
+    border: solid 0.1rem #000;
     border-radius: 30rem;
     background-color: #b5ddfc;
 }
@@ -44,7 +73,9 @@ header {
 }*/
 
 .footer {
-    margin-top: 4%;
+    position: absolute;
+    bottom: 0vh;
+    left: 46.5vw
 }
 
 /* WIP */

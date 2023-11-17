@@ -35,6 +35,13 @@ async function loadData() {
 }
 
 
+//Get references to data placeholders
+var yearPlaceHolder = document.getElementById("placeholder_Year");
+var countryPlaceHolder = document.getElementById("placeholder_Country");
+var populationPlaceHolder = document.getElementById("placeholder_Population");
+var numUsersPlaceHolder = document.getElementById("placeholder_NumInternetUsers");
+
+
 /* Year slider */
 var minYear = 2000;
 var maxYear = 2016;
@@ -81,6 +88,8 @@ var tooltip = d3.select("#tooltip")
 .attr("class", "tooltip")
 .style("opacity", 0)
 
+
+
 //Tracking mouse position
 var placeTooltip = function(e) {
     tooltipJS.style.top = (e.clientY + 20) + 'px';
@@ -103,7 +112,9 @@ let mouseOver = function(d) {
         .style("stroke", "black")
     
     tooltip.style("opacity", 1)
-    countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id])
+    countryNameData[d.id] == undefined ? countryPlaceHolder.innerHTML = "No data avaliable" : countryPlaceHolder.innerHTML = countryNameData[d.id]
+    //countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id]) - old tooltip
+     
 }
 
 let mouseLeave = function(d) {
@@ -124,8 +135,8 @@ let mouseLeave = function(d) {
 }
 
 function displayMap(topoData, year) {
+    yearPlaceHolder.innerHTML = year;
     // Draw the map
-    
     svg.append("g")
     .selectAll("path")
     .data(topoData.features) //sets the "d" variable to be topo.features for this function

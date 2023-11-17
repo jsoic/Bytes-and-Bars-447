@@ -22,13 +22,25 @@
     <!-- Map & Data Displays -->
     <div class="GENERAL_FORMATTING"> <!-- TODO: add side bars that display data and color scaling that adjusts automatically - make sure to label it as percentage of pop-->
         <h3 id="tooltip"></h3>
+        <div class="GENERAL_FORMATTING SIDE_BAR left_side_bar">
+                <h2>Year:</h2>
+                <p id="placeholder_Year">####</p>
+                <h2>Country:</h2>
+                <p id="placeholder_Country">####</p>
+                <h2>Population:</h2>
+                <p id="placeholder_Population">####</p>
+                <h2>Number of Internet Users:</h2>
+                <p id="placeholder_NumInternetUsers">####</p>
+        </div>
         <svg class="map" id="my_dataviz"></svg>
+        <div class="GENERAL_FORMATTING SIDE_BAR">
+            Test
+        </div>
     </div>
     
     <div class="GENERAL_FORMATTING timeline">
         <!-- FIXME: Clean up timeline slider to look better-->
         <div id="sliderWrapper" class="slider">
-            <!--<label for="yearSlider">Year</label>-->
             <datalist id="yearList"></datalist>
             <input id="yearSlider" type="range" list="yearList" onclick="changeYear()">
            
