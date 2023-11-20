@@ -22,7 +22,6 @@ var colorScale = d3.scaleThreshold()
 
  /* Load external data and boot */
 var topographicalData, countryNameData;
-//FIXME: Add other internet data in side bars
 var internetUsageByCountry, populationByCountry;
 var selectedYear = 2016;
 
@@ -40,6 +39,7 @@ var yearPlaceHolder = document.getElementById("placeholder_Year");
 var countryPlaceHolder = document.getElementById("placeholder_Country");
 var populationPlaceHolder = document.getElementById("placeholder_Population");
 var numUsersPlaceHolder = document.getElementById("placeholder_NumInternetUsers");
+var percentPopPlaceHolder = document.getElementById("placeholder_NumPercentPop");
 
 
 /* Year slider */
@@ -70,8 +70,17 @@ function changeYear() {
     if(newYear != selectedYear) {
         selectedYear = newYear;
         svg.selectAll("*").remove();
+
+        //Clean up data display
+        countryPlaceHolder.innerHTML = "";
+        populationPlaceHolder.innerHTML = "";
+        numUsersPlaceHolder.innerHTML = "";
+        percentPopPlaceHolder.innerHTML = "";
+
+        //Update Map
         displayMap(topographicalData, newYear);
     }   
+
 }
 
 
@@ -91,6 +100,7 @@ var tooltip = d3.select("#tooltip")
 
 
 //Tracking mouse position
+//TODO - Remove tooltip once I know I am not going to need it anymore
 var placeTooltip = function(e) {
     tooltipJS.style.top = (e.clientY + 20) + 'px';
     tooltipJS.style.left = (e.clientX + 20) + 'px';
@@ -111,10 +121,23 @@ let mouseOver = function(d) {
         .style("opacity", selectedOpacity)
         .style("stroke", "black")
     
-    tooltip.style("opacity", 1)
-    countryNameData[d.id] == undefined ? countryPlaceHolder.innerHTML = "No data avaliable" : countryPlaceHolder.innerHTML = countryNameData[d.id]
-    //countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id]) - old tooltip
-     
+    if(countryNameData[d.id] == undefined) {
+        countryPlaceHolder.innerHTML = "No data avaliable";
+        populationPlaceHolder.innerHTML = "No data avaliable";
+        numUsersPlaceHolder.innerHTML = "No data avaliable";
+        percentPopPlaceHolder.innerHTML = "No data avaliable";
+    }
+    else {
+        countryPlaceHolder.innerHTML = countryNameData[d.id];
+        populationPlaceHolder.innerHTML = populationByCountry[d.id][selectedYear].toLocaleString('en-US');
+        numUsersPlaceHolder.innerHTML = internetUsageByCountry[d.id][selectedYear].toLocaleString('en-US');
+        percentPopPlaceHolder.innerHTML = (internetUsageByCountry[d.id][selectedYear]/populationByCountry[d.id][selectedYear]).toLocaleString('en-US', {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2});
+        console.log(internetUsageByCountry[d.id][selectedYear], populationByCountry[d.id][selectedYear])
+    }
+  
+    
+    //tooltip.style("opacity", 1)
+    //countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id]) - old tooltip 
 }
 
 let mouseLeave = function(d) {
@@ -162,8 +185,8 @@ function displayMap(topoData, year) {
         .style("stroke", "grey")
         .attr("class", function(d){ return "Country" } )
         .style("opacity", defaultOpacity)
-        .on("mouseover", mouseOver )
-        .on("mouseleave", mouseLeave )
+        .on("mouseover", mouseOver)
+        .on("mouseleave", mouseLeave)
 }
 
 

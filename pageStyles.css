@@ -27,26 +27,32 @@ header {
     width: 10vw;
     margin: 0vw 1vw;
     border: #000 solid 0.15rem;
-    padding: 0.5vw
+    padding: 0.5vw;
+}
+
+.SIDE_BAR h1 {
+    margin-bottom: 2vh;
+    text-decoration: underline;
 }
 
 /*.left_side_bar {
 
 }*/
-.left_side_bar h2 {
-    text-decoration: underline;
-}
 
-.left_side_bar p {
+.dataSlot {
     margin: 0.5rem 1rem;
     padding: 0;
     font-size: x-large;
-    height: 5vh;
+    height: 8vh;
 }
 
-.countrySlot { /* FIXME: Seperate out the hight from the paragraph section above so that each one can be a seperate height and I can make country taller than the rest*/
-    height: 10vh;
+.countrySlot {
+    height: 9vh;
 }
+
+/*.right_side_bar {
+
+}*/
 
 /*.title {
     
