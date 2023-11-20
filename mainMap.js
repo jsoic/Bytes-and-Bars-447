@@ -1,4 +1,4 @@
-/* The svg */
+/* The map svg */
 var svg_js = document.getElementById("my_dataviz");
 var svg = d3.select("svg");
 
@@ -8,19 +8,35 @@ svg_js.setAttribute("height", $(window).height() * 0.75);
 width = +svg.attr("width");
 height = +svg.attr("height");
 
+
 /* Map and projection */
 var projection = d3.geoNaturalEarth1()
  .scale(height/2.80)
  .center([0,1])
  .translate([width/2, height/2]);
 
+
 /* Color scale */
+//Setting up color scale
 var colorScale = d3.scaleThreshold()
  .domain([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
  .range(d3.schemeReds[9]);
 
+//Filing static color key
+document.getElementById("colorError").style.backgroundColor = "#fff"
+document.getElementById("color0").style.backgroundColor = colorScale(.05);
+document.getElementById("color0").style.backgroundColor = colorScale(.05);
+document.getElementById("color1").style.backgroundColor = colorScale(.1);
+document.getElementById("color2").style.backgroundColor = colorScale(.2);
+document.getElementById("color3").style.backgroundColor = colorScale(.3);
+document.getElementById("color4").style.backgroundColor = colorScale(.4);
+document.getElementById("color5").style.backgroundColor = colorScale(.5);
+document.getElementById("color6").style.backgroundColor = colorScale(.6);
+document.getElementById("color7").style.backgroundColor = colorScale(.7);
+document.getElementById("color8").style.backgroundColor = colorScale(.8);
 
- /* Load external data and boot */
+
+/* Load external data and boot */
 var topographicalData, countryNameData;
 var internetUsageByCountry, populationByCountry;
 var selectedYear = 2016;
@@ -32,14 +48,6 @@ async function loadData() {
     internetUsageByCountry = await d3.json("./jsonFiles/internetUsageTemp.json")
     displayMap(topographicalData, selectedYear);
 }
-
-
-//Get references to data placeholders
-var yearPlaceHolder = document.getElementById("placeholder_Year");
-var countryPlaceHolder = document.getElementById("placeholder_Country");
-var populationPlaceHolder = document.getElementById("placeholder_Population");
-var numUsersPlaceHolder = document.getElementById("placeholder_NumInternetUsers");
-var percentPopPlaceHolder = document.getElementById("placeholder_NumPercentPop");
 
 
 /* Year slider */
@@ -91,23 +99,15 @@ var defaultOpacity = 1;
 var selectedOpacity = 1;
 var backgroundOpacity = 0.6;
 
-// Define the tooltip
-var tooltipJS = document.getElementById('tooltip');
-var tooltip = d3.select("#tooltip")
-.attr("class", "tooltip")
-.style("opacity", 0)
-
-
+//Get references to data placeholders for side bar
+var yearPlaceHolder = document.getElementById("placeholder_Year");
+var countryPlaceHolder = document.getElementById("placeholder_Country");
+var populationPlaceHolder = document.getElementById("placeholder_Population");
+var numUsersPlaceHolder = document.getElementById("placeholder_NumInternetUsers");
+var percentPopPlaceHolder = document.getElementById("placeholder_NumPercentPop");
 
 //Tracking mouse position
-//TODO - Remove tooltip once I know I am not going to need it anymore
-var placeTooltip = function(e) {
-    tooltipJS.style.top = (e.clientY + 20) + 'px';
-    tooltipJS.style.left = (e.clientX + 20) + 'px';
-}
-
 let mouseOver = function(d) {
-    document.getElementById("my_dataviz").addEventListener('mousemove', placeTooltip);
     document.getElementById("my_dataviz").style.cursor = "pointer";
     
     d3.selectAll(".Country")
@@ -132,16 +132,10 @@ let mouseOver = function(d) {
         populationPlaceHolder.innerHTML = populationByCountry[d.id][selectedYear].toLocaleString('en-US');
         numUsersPlaceHolder.innerHTML = internetUsageByCountry[d.id][selectedYear].toLocaleString('en-US');
         percentPopPlaceHolder.innerHTML = (internetUsageByCountry[d.id][selectedYear]/populationByCountry[d.id][selectedYear]).toLocaleString('en-US', {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2});
-        console.log(internetUsageByCountry[d.id][selectedYear], populationByCountry[d.id][selectedYear])
     }
-  
-    
-    //tooltip.style("opacity", 1)
-    //countryNameData[d.id] == undefined ? tooltip.html("No data avaliable") : tooltip.html(countryNameData[d.id]) - old tooltip 
 }
 
 let mouseLeave = function(d) {
-    document.getElementById("my_dataviz").removeEventListener('mousemove', placeTooltip);
     document.getElementById("my_dataviz").style.cursor = "default";
 
     d3.selectAll(".Country")
@@ -153,10 +147,10 @@ let mouseLeave = function(d) {
         .duration(transitionDuration)
         .style("stroke", "grey")
         .style("opacity", defaultOpacity)
-        
-    tooltip.style("opacity", 0)
 }
 
+
+/* Main map display function */
 function displayMap(topoData, year) {
     yearPlaceHolder.innerHTML = year;
     // Draw the map

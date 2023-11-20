@@ -20,7 +20,7 @@
     </div>
 
     <!-- Map & Data Displays -->
-    <div class="GENERAL_FORMATTING"> <!-- TODO: add side bars that display data and color scaling that adjusts automatically - make sure to label it as percentage of pop-->
+    <div class="GENERAL_FORMATTING">
         <h3 id="tooltip"></h3>
         <div class="GENERAL_FORMATTING SIDE_BAR left_side_bar">
                 <h1>Country Data</h1>
@@ -38,6 +38,48 @@
         <svg class="map" id="my_dataviz"></svg>
         <div class="GENERAL_FORMATTING SIDE_BAR right_side_bar">
             <h1>Color Code</h1>
+            <h2>% of Population:</h2>
+
+            <div class="colorStepWrapper">
+                <svg id="colorError"></svg> 
+                <p>No data available</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color0"></svg> 
+                <p>0 - 9%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color1"></svg>
+                <p>10 - 19%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color2"></svg>
+                <p>20 - 29%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color3"></svg>
+                <p>30 - 39%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color4"></svg>
+                <p>40 - 49%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color5"></svg>
+                <p>50 - 59%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color6"></svg>
+                <p>60 - 69%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color7"></svg>
+                <p>70 - 79%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color8"></svg>
+                <p>80+%</p>
+            </div>
         </div>
     </div>
     

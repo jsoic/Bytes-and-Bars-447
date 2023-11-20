@@ -4,12 +4,16 @@ body, h1, h2, h3 {
     padding: 0;
 }
 
+body {
+    background-color: rgba(225, 225, 225, 0.25);
+}
+
 /* Apply styles to the header */
 header {
     background-color: #333;
     color: #fff;
     text-align: center;
-    padding: 1em;
+    padding: 1rem;
 }
 
 .GENERAL_FORMATTING {
@@ -17,6 +21,15 @@ header {
     flex-direction: row;
     justify-content: center;
     margin: 1rem 0 1rem 0;
+}
+
+.title {
+    margin-top: 3vh;
+    margin-bottom: 3vh;   
+}
+
+.title h1 {
+    font-size: 2.5rem;
 }
 
 .SIDE_BAR {
@@ -28,16 +41,13 @@ header {
     margin: 0vw 1vw;
     border: #000 solid 0.15rem;
     padding: 0.5vw;
+    background-color: #e8e8e8;
 }
 
 .SIDE_BAR h1 {
-    margin-bottom: 2vh;
+    margin-bottom: 1vh;
     text-decoration: underline;
 }
-
-/*.left_side_bar {
-
-}*/
 
 .dataSlot {
     margin: 0.5rem 1rem;
@@ -50,13 +60,27 @@ header {
     height: 9vh;
 }
 
-/*.right_side_bar {
+.right_side_bar h2 {
+    margin-bottom: 1vh;
+}
 
-}*/
+.colorStepWrapper {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+}
 
-/*.title {
-    
-}*/
+.colorStepWrapper p {
+    font-size: larger;
+}
+
+.right_side_bar svg {
+    width: 2rem;
+    height: 1.5rem;
+    background-color: red;
+    margin: 1vh ;
+    border: #000 2px solid;
+}
 
 .map {
     border: solid 0.1rem #000;
@@ -64,14 +88,7 @@ header {
     background-color: #b5ddfc;
 }
 
-.tooltip {
-    position: fixed;
-    pointer-events: none;
-    background: rgba(0, 0, 0, 0.75);
-    color: #fff;
-    z-index: 10;
-    font-weight: normal;
-  }
+
 
 /*.timeline {
 
