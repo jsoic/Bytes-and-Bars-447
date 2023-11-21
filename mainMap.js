@@ -121,17 +121,19 @@ let mouseOver = function(d) {
         .style("opacity", selectedOpacity)
         .style("stroke", "black")
     
+    //Need to check and ensure data for each display is in the corresponding data sets
+    
     if(countryNameData[d.id] == undefined) {
-        countryPlaceHolder.innerHTML = "No data avaliable";
-        populationPlaceHolder.innerHTML = "No data avaliable";
-        numUsersPlaceHolder.innerHTML = "No data avaliable";
-        percentPopPlaceHolder.innerHTML = "No data avaliable";
+        countryPlaceHolder.innerHTML = "No data";
+        populationPlaceHolder.innerHTML = "No data";
+        numUsersPlaceHolder.innerHTML = "No data";
+        percentPopPlaceHolder.innerHTML = "No data";
     }
     else {
         countryPlaceHolder.innerHTML = countryNameData[d.id];
-        populationPlaceHolder.innerHTML = populationByCountry[d.id][selectedYear].toLocaleString('en-US');
-        numUsersPlaceHolder.innerHTML = internetUsageByCountry[d.id][selectedYear].toLocaleString('en-US');
-        percentPopPlaceHolder.innerHTML = (internetUsageByCountry[d.id][selectedYear]/populationByCountry[d.id][selectedYear]).toLocaleString('en-US', {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2});
+        populationPlaceHolder.innerHTML = (populationByCountry[d.id][selectedYear] == undefined) ? "No data" : populationByCountry[d.id][selectedYear].toLocaleString('en-US');
+        numUsersPlaceHolder.innerHTML = (internetUsageByCountry[d.id][selectedYear] == undefined) ? "No data" : internetUsageByCountry[d.id][selectedYear].toLocaleString('en-US');
+        percentPopPlaceHolder.innerHTML = (internetUsageByCountry[d.id][selectedYear] == undefined ||  populationByCountry[d.id][selectedYear] == undefined) ? "No data" : (internetUsageByCountry[d.id][selectedYear]/populationByCountry[d.id][selectedYear]).toLocaleString('en-US', {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 }
 

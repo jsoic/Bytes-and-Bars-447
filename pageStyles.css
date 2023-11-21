@@ -1,4 +1,9 @@
 /* Reset some default styles to ensure consistency */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,300&display=swap');
+
+header {
+    font-family: 'Montserrat', sans-serif;
+}
 body, h1, h2, h3 {
     margin: 0;
     padding: 0;
@@ -6,6 +11,7 @@ body, h1, h2, h3 {
 
 body {
     background-color: rgba(225, 225, 225, 0.25);
+    font-family: 'Montserrat', sans-serif;
 }
 
 /* Apply styles to the header */
@@ -46,11 +52,13 @@ header {
     border: #000 solid 0.15rem;
     padding: 0.5vw;
     background-color: #e8e8e8;
+    border-radius: 0.5rem;
 }
 
 .SIDE_BAR h1 {
     margin-bottom: 1vh;
     text-decoration: underline;
+    font-size: 1.75rem;
 }
 
 .dataSlot {
@@ -61,21 +69,24 @@ header {
 }
 
 .countrySlot {
-    height: 9vh;
+    height: 15vh;
 }
 
 .right_side_bar h2 {
-    margin-bottom: 1vh;
+    margin-bottom: 1.5vh;
+    font-size: 1.4rem;
 }
 
 .colorStepWrapper {
     display: flex; 
     flex-direction: row; 
     align-items: center;
+    margin: 0.6vh;
 }
 
 .colorStepWrapper p {
     font-size: larger;
+    margin: 0;
 }
 
 .right_side_bar svg {
@@ -101,7 +112,7 @@ header {
   
 /* min / max labels at the edges */
 .slider::before, .slider::after {
-    font: 0.9rem monospace;
+    font: 0.9rem;
     content: counter(x);
     position: absolute;
     bottom: -3.5vh;
