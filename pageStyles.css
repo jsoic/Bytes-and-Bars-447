@@ -1,0 +1,149 @@
+/* Reset some default styles to ensure consistency */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,300&display=swap');
+
+header {
+    font-family: 'Montserrat', sans-serif;
+}
+body, h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: rgba(225, 225, 225, 0.25);
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Apply styles to the header */
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+}
+
+
+/* Title */
+.GENERAL_FORMATTING {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1rem 0 1rem 0;
+}
+
+.title {
+    margin-top: 3vh;
+    margin-bottom: 3vh;   
+}
+
+.title h1 {
+    font-size: 2.5rem;
+}
+
+
+/* Main body */
+.SIDE_BAR {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 74vh;
+    width: 10vw;
+    margin: 0vw 1vw;
+    border: #000 solid 0.15rem;
+    padding: 0.5vw;
+    background-color: #e8e8e8;
+    border-radius: 0.5rem;
+}
+
+.SIDE_BAR h1 {
+    margin-bottom: 1vh;
+    text-decoration: underline;
+    font-size: 1.75rem;
+}
+
+.dataSlot {
+    margin: 0.5rem 1rem;
+    padding: 0;
+    font-size: x-large;
+    height: 8vh;
+}
+
+.countrySlot {
+    height: 15vh;
+}
+
+.right_side_bar h2 {
+    margin-bottom: 1.5vh;
+    font-size: 1.4rem;
+}
+
+.colorStepWrapper {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    margin: 0.6vh;
+}
+
+.colorStepWrapper p {
+    font-size: larger;
+    margin: 0;
+}
+
+.right_side_bar svg {
+    width: 2rem;
+    height: 1.5rem;
+    background-color: red;
+    margin: 1vh ;
+    border: #000 2px solid;
+}
+
+.map {
+    border: solid 0.1rem #000;
+    border-radius: 30rem;
+    background-color: #b5ddfc;
+}
+
+
+/* Timeline slider */
+.slider {
+    display: inline-block;
+    position: relative;
+}
+  
+/* min / max labels at the edges */
+.slider::before, .slider::after {
+    font: 0.9rem;
+    content: counter(x);
+    position: absolute;
+    bottom: -3.5vh;
+}
+  
+.slider::before {
+    counter-reset: x var(--min);
+    transform: translateX(-30%);
+}
+  
+.slider::after {
+    counter-reset: x var(--max);
+    right: 0;
+    transform: translateX(30%);
+}
+
+.slider input[type="range"] {
+    width: 25vw;
+    height: .25vh;
+    background: black;
+    border: none;
+    outline: none;
+} 
+
+.slider input[type="range"]::-webkit-slider-thumb {
+    cursor: pointer;
+} 
+
+/* Copyright footer */
+.footer {
+    position: absolute;
+    bottom: 0vh;
+    left: 46.5vw
+}
