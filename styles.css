@@ -6,3 +6,24 @@
     z-index: 10;
   }
   
+body {
+    display: flex;
+    height: 100vh;
+}
+
+#map-container {
+    width: 20%;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#visualization-container {
+    width: 60%;
+}
+
+
+#statistic-container {
+  width: 20%;
+  padding: 20px;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+}
