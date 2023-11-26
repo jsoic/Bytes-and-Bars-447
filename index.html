@@ -1,135 +1,100 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./pageStyles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<!-- Load d3.js -->
-<script src="http://d3js.org/d3.v5.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-
-
-<!-- Create an element where the map will take place -->
-<input type="text" id="myText" value="year">
-<button onclick="myFunction()">Try it</button>
-<p1></p1>
-<svg id="my_dataviz" width="1700" height="875"></svg>
-
-<script>
-    // The svg
-    var svg = d3.select("svg"),
-      width = +svg.attr("width"),
-      height = +svg.attr("height");
+    <!-- Load d3.js -->
+    <script src="http://d3js.org/d3.v5.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     
-    // Map and projection
-    var path = d3.geoPath();
-    var projection = d3.geoMercator()
-      .scale(175)
-      .center([0,20])
-      .translate([width/2, height/2]);
+    <title>Internet Usage & Correlations Around the World</title>
+</head>
+<body>
+    <!-- Page Heading -->
+    <div class="GENERAL_FORMATTING title">
+        <h1>Internet Usage & Correlations Around the World 2000-2016</h1>
+    </div>
+
+    <!-- Map & Data Displays -->
+    <div class="GENERAL_FORMATTING">
+        <div class="GENERAL_FORMATTING SIDE_BAR left_side_bar">
+                <h1>Country Data</h1>
+                <h2>Name:</h2>
+                <p id="placeholder_Country" class="dataSlot countrySlot"></p>
+                <h2>Year:</h2>
+                <p id="placeholder_Year" class="dataSlot"></p>
+                <h2>Population:</h2>
+                <p id="placeholder_Population" class="dataSlot"></p>
+                <h2>Number of Internet Users:</h2>
+                <p id="placeholder_NumInternetUsers" class="dataSlot"></p>
+                <h2>Percent of Population:</h2>
+                <p id="placeholder_NumPercentPop" class="dataSlot"></p>
+        </div>
+        <svg class="map" id="my_dataviz"></svg>
+        <div class="GENERAL_FORMATTING SIDE_BAR right_side_bar">
+            <h1>Color Code</h1>
+            <h2>% of Population:</h2>
+
+            <div class="colorStepWrapper">
+                <svg id="colorError"></svg> 
+                <p>No data</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color0"></svg> 
+                <p>0 - 9%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color1"></svg>
+                <p>10 - 19%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color2"></svg>
+                <p>20 - 29%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color3"></svg>
+                <p>30 - 39%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color4"></svg>
+                <p>40 - 49%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color5"></svg>
+                <p>50 - 59%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color6"></svg>
+                <p>60 - 69%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color7"></svg>
+                <p>70 - 79%</p>
+            </div>
+            <div class="colorStepWrapper">
+                <svg id="color8"></svg>
+                <p>80+%</p>
+            </div>
+        </div>
+    </div>
     
-    // Data and color scale
-    var internetData = d3.map();
-    var nameData;
-    var valueData;
-    var topoData;
-
-    var colorScale = d3.scaleThreshold()
-      .domain([0, 1000000, 10000000, 25000000, 50000000, 75000000, 100000000, 500000000])
-      .range(d3.schemeReds[9]);
+    <div class="GENERAL_FORMATTING timeline">
+        <div id="sliderWrapper" class="slider">
+            <datalist id="yearList"></datalist>
+            <input id="yearSlider" type="range" list="yearList" onclick="changeYear()">
+        </div> 
+    </div> 
     
-    // Load external data and boot
-    queue()
-    async function queue() {
-      topoData = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-      nameData = await d3.json("./jsonFiles/countryCodeMapper.json")
-      valueData = await d3.json("./jsonFiles/internetUsageTemp.json")
-      ready(null, topoData);
-    }
+    <!-- Page Footer-->
+    <div class="GENERAL_FORMATTING footer">
+        <span>&copy; Bytes & Bars <script type="text/javascript">document.write( new Date().getFullYear() );</script></span>
+    </div>
 
-    var x = 2016;
-    function myFunction() {
-      x = document.getElementById("myText").value;
-      ready(null, topoData)
-    }
-    
-    function ready(error, topo) {
-
-      let mouseOver = function(d) {
-        d3.selectAll(".Country")
-          .transition()
-          .duration(50)
-          .style("opacity", .5)
-        d3.select(this)
-          .transition()
-          .duration(50)
-          .style("opacity", 1)
-          .style("stroke", "black")
-        
-          //Tooltip - WIP
-        try{
-          tip.style("opacity", 1)
-          .html(nameData[d.id] + " " + valueData[d.id][2016])
-          .style("left", (d3.event.pageX-25) + "px")
-          .style("top", (d3.event.pageY-75) + "px")
-        }
-        catch { 
-           tip.style("opacity", 1)
-            .html("No data avaliable")
-            .style("left", (d3.event.pageX-25) + "px")
-            .style("top", (d3.event.pageY-75) + "px")
-        }
-
-      }
-    
-      let mouseLeave = function(d) {
-        d3.selectAll(".Country")
-          .transition()
-          .duration(50)
-          .style("opacity", .8)
-          .style("stroke", "grey")
-        d3.select(this)
-          .transition()
-          .duration(50)
-          .style("stroke", "grey")
-          
-          //Tooltip - WIP
-          tip.style("opacity", 0)
-      }
-
-      // Define the div for the tooltip
-      var tip = d3.select("p1").append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-
-      // Draw the map
-      svg.append("g")
-        .selectAll("path")
-        .data(topo.features) //sets the "d" variable to be topo.features for this function
-        .enter()
-        .append("path")
-          // draw each country
-          .attr("d", d3.geoPath()
-            .projection(projection)
-          )
-          
-          // set the color of each country
-          .attr("fill", function (d) {
-            try {
-              d.total = valueData[d.id][x]; //Using the id from topo.features to match entry in popValueData dictonary for pop value
-              return colorScale(d.total);
-            }
-            catch {
-              //Value is set to -1 if no data is found for that country
-              d.total = -1
-              return "#000000"
-            }
-          })
-
-          .style("stroke", "grey")
-          .attr("class", function(d){ return "Country" } )
-          .style("opacity", .8)
-          .on("mouseover", mouseOver )
-          .on("mouseleave", mouseLeave )
-        }
-        
-    
-    </script>
+    <!-- Load main map -->
+    <script src="./mainMap.js"></script>
+</body> 
+</html>
