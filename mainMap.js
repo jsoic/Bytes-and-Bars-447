@@ -151,6 +151,11 @@ let mouseLeave = function(d) {
         .style("opacity", defaultOpacity)
 }
 
+let clickCountry = function(d) {
+    if (countryNameData[d.id] != undefined) {
+        window.location.href = "popup.html?country=" + d.id + "&year=" + selectedYear;
+    }
+}
 
 /* Main map display function */
 function displayMap(topoData, year) {
@@ -183,6 +188,7 @@ function displayMap(topoData, year) {
         .style("opacity", defaultOpacity)
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
+        .on("click", clickCountry);
 }
 
 

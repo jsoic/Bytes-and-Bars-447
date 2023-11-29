@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,90 +7,391 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Country Visualization</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
-    <script src="multiselect-dropdown.js" ></script>
+    <!-- Load Bootstrap CSS first -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
+        crossorigin="anonymous">
+    <!-- Load jQuery before Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Load Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- Load D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
     <div id="map-container">
         <a href="index.html"><img src="worldMap.png" alt="World Map Image" style="width: 100%;"></a>
-        <hr/>
-        <br/>
+        <hr />
+        <br />
 
-        <!-- <select id="country-select"></select>
-        <select id="visualization-select"></select> -->
-        <div class="row"><div class="col ">
-            <label>Select Data Set</label>
-            <select name="field1" id="field1" multiple onchange="console.log(Array.from(this.selectedOptions).map(x=>x.value??x.text))" multiselect-hide-x="true">
-              <option value="1">Average Years of School</option>
-              <option value="2">Child Mortality Rate</option>
-              <option value="3">Literacy Rate</option>
-              <option value="4">GDP Per Captia</option>
-              <option value="5">Happiness Index</option>
-              <option value="6">Human Developmnent Index</option>
-              <option value="7">Life Expectancy</option>
-              <option value="8">Poverty Rate</option>
-              <option value="9">Unemploynment Rate</option>
-              <option value="10">Voter Percentage</option>
-            </select>
-    
-    
-    <br/>
-    <br/>
-    <br/>
+        <div class="row">
+            <div class="col">
+                <label>Select Data Set</label>
+                <select name="field1" id="field1"
+                    onchange="console.log(Array.from(this.selectedOptions).map(x=>x.value??x.text))" multiple multiselect-hide-x="true">
+                    <option value="averageYearsOfSchool.json">Average Years of School</option>
+                    <option value="childMortalityRates.json">Child Mortality Rate</option>
+                    <option value="cross-country-literacy-rates.json">Literacy Rate</option>
+                    <option value="GDPpercaptia.json">GDP Per Capita</option>
+                    <option value="happinessIndex.json">Happiness Index</option>
+                    <option value="humanDevelopmentIndex.json">Human Development Index</option>
+                    <option value="life-expectancy-undp.json">Life Expectancy</option>
+                    <option value="share-of-population-in-extreme-poverty.json">Poverty Rate</option>
+                    <option value="unemployment-rate.json">Unemployment Rate</option>
+                    <option value="voterPercent.json">Voter Percentage</option>
+                </select>
 
-            <label>Select Countries</label>
-     <select name="field2" id="field2" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" onchange="getSelectedOptions()"></select>
-          </div></div>
+                <br />
+                <br />
+                <br />
+
+                <label>Select Mode</label>
+                <select name="mode" id="mode" onchange="handleModeChange()">
+                    <option value="region">Region Selection</option>
+                    <option value="country">Country Selection</option>
+                </select>
+
+                <br />
+                <br />
+                <br />
+
+                <label>Select Countries/Regions</label>
+                <!-- <div name="field2" id="field2">
+                </div> -->
+                <select name="field2" id="field2" multiple multiselect-search="true" multiselect-select-all="true"
+                    multiselect-max-items="3" onchange="getSelectedOptions()"></select>
+            </div>
+        </div>
+
+        <button onclick="updateDisplay()">Update</button>
     </div>
 
-    <div id="visualization-container">
+    <div id="visualization-container" style="display: flex; justify-content: center; align-items: center">
     </div>
 
     <div id="statistic-container">
-        <h4>Access to Internet %:</h4>
+        <!-- <h4>Access to Internet %:</h4>
         <h6>Afghanistan: 18.4%</h6>
         <h6>Albania: 80.1 %</h6>
-        <h6>Algeria: 71.0%</h6>
+        <h6>Algeria: 71.0%</h6> -->
     </div>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
+        let data, countryNames;
+
+
         function readJSONFile(file, callback) {
             var rawFile = new XMLHttpRequest();
             rawFile.overrideMimeType("application/json");
             rawFile.open("GET", file, true);
-            rawFile.onreadystatechange = function() {
+            rawFile.onreadystatechange = function () {
                 if (rawFile.readyState === 4 && rawFile.status == "200") {
                     callback(rawFile.responseText);
                 }
             }
             rawFile.send(null);
         }
-    
-        function populateSelectWithJSON(jsonData) {
-            const selectElement = document.getElementById('field2');
-            const data = JSON.parse(jsonData);
-    
-            Object.keys(data).forEach(key => {
-                let opt = document.createElement('option');
-                opt.value = key;
-                opt.innerHTML = data[key];
-                selectElement.appendChild(opt);
-            });
-        }
-    
+
         function getSelectedOptions() {
             const selectedOptions = Array.from(document.getElementById('field2').selectedOptions).map(option => option.value);
-            console.log(selectedOptions);
+            // console.log(selectedOptions);
         }
-    
-        readJSONFile('./jsonFiles/countryCodeMapper.json', function(text){
-            populateSelectWithJSON(text);
-        });
-    
+
+        function clearSelect(elementId) {
+            var selectElement = document.getElementById(elementId);
+            
+            // Clear all selected options using the multiselect library API
+            $(selectElement).multiselect('deselectAll', false);
+            $(selectElement).multiselect('updateButtonText');
+            
+            // Call refresh to update the custom dropdown content
+            var dropdown = document.querySelector('.multiselect-dropdown');
+            if (dropdown) {
+                dropdown.refresh();
+            }
+        }
+
+        function populateDropdown(jsonData, selectedMode, dropdown) {
+            // console.log("In Populate dropdown");
+            // console.log("Mode: ", selectedMode);
+            
+            // let dropdown = document.getElementById('field2');
+            let data = JSON.parse(jsonData);
+            
+            // Clear existing options
+            dropdown.options.length = 0;
+
+            // using the function:
+            // clearSelect('field2')
+
+            if (selectedMode === 'region') {
+                // If it's region mode, add regions to the dropdown directly
+                // console.log('In populate with region');
+                Object.keys(data).forEach(region => {
+                    let opt = new Option(region, region);
+                    dropdown.add(opt);
+                });
+            } else {
+                // If it's country mode, add country names to the dropdown directly
+                // console.log('In populate with country   ');
+                Object.keys(data).forEach(countryCode => {
+                    let opt = new Option(data[countryCode], countryCode);
+                    dropdown.add(opt);
+                });
+            }
+            // console.log("IN FUNC", dropdown.options.length);
+            // console.log("End of populate");
+        }
+
+        function handleModeChange() {
+            let selectedMode = document.getElementById('mode').value;
+            let dropdown = document.getElementById('field2');
+            // console.log(selectedMode);
+            // console.log(dropdown)
+
+            if (selectedMode === 'region') {
+                readJSONFile('./jsonFiles/countryRegions.json', jsonData => populateDropdown(jsonData, selectedMode, dropdown));
+            } else {
+                readJSONFile('./jsonFiles/countryCodeMapper.json', jsonData => populateDropdown(jsonData, selectedMode, dropdown));
+            }
+
+            // console.log("FINAL:", dropdown)
+        }
+
+
+        function renderLineGraph(selectedGraph, selectedCountries) {
+            const visualizationContainer = document.getElementById('visualization-container');
+            visualizationContainer.innerHTML = ''; // Clear previous content
+
+
+            const dataOptions = {
+            "averageYearsOfSchool.json": "Average Years of School",
+            "childMortalityRates.json": "Child Mortality Rate",
+            "cross-country-literacy-rates.json": "Literacy Rate",
+            "GDPpercaptia.json": "GDP Per Capita",
+            "happinessIndex.json": "Happiness Index",
+            "humanDevelopmentIndex.json": "Human Development Index",
+            "life-expectancy-undp.json": "Life Expectancy",
+            "share-of-population-in-extreme-poverty.json": "Poverty Rate",
+            "unemployment-rate.json": "Unemployment Rate",
+            "voterPercent.json": "Voter Percentage"
+            };
+
+            // Check if there's data to display
+            if (selectedGraph && selectedCountries.length > 0) {
+                const svg = d3.select(visualizationContainer).append("svg")
+                    .attr("width", 800) // Set the width as needed
+                    .attr("height", 400); // Set the height as needed
+
+                // Specify the year you want to visualize
+                // const targetYear = 2010; // Change this to the desired year
+                const targetYear = yearParam;
+                // Read data from JSON files
+                Promise.all([
+                    fetch(`./jsonFiles/${selectedGraph}`).then(response => response.json()),
+                    fetch('./jsonFiles/countryCodeMapper.json').then(response => response.json())
+                ]).then(jsonData => {
+                    data = jsonData[0];  // Set the data here
+                    countryNames = jsonData[1];
+
+                    const svg = d3.select("svg"),
+                        margin = { top: 50, right: 80, bottom: 30, left: 50 }, // Adjusted top margin for the title
+                        width = +svg.attr("width") - margin.left - margin.right,
+                        height = +svg.attr("height") - margin.top - margin.bottom,
+                        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                        
+                    const x = d3.scaleBand().range([0, width]).padding(0.1);
+                    const y = d3.scaleLinear().range([height, 0]);
+
+                    console.log("Country names 1:", selectedCountries)
+                    const color = d3.scaleOrdinal(d3.schemeCategory10); // Using a categorical color scale
+
+                    const countryData = selectedCountries.map(country => ({
+                        country: countryNames[country],
+                        value: data[country][targetYear],
+                    }));
+
+                    x.domain(countryData.map(d => d.country));
+                    y.domain([0, d3.max(countryData, d => d.value)]);
+
+                    // Add the chart title
+                    svg.append("text")
+                        .attr("x", (width + margin.left + margin.right) / 2)
+                        .attr("y", margin.top / 2)
+                        .attr("text-anchor", "middle")
+                        .style("font-size", "24px")
+                        .text(`${dataOptions[selectedGraph]} - ${targetYear}`);
+
+                    // Add the X Axis
+                    g.append("g")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x));
+
+                    // Add the Y Axis
+                    g.append("g")
+                        .call(d3.axisLeft(y));
+
+                    // Add bars
+                    g.selectAll(".bar")
+                        .data(countryData)
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("fill", (d, i) => color(i))
+                        .attr("x", d => x(d.country))
+                        .attr("y", d => y(d.value))
+                        .attr("width", x.bandwidth())
+                        .attr("height", d => height - y(d.value));
+                });
+            }
+        }
+
+
+
+
+        function updateDisplay() {
+            const selectedGraph = document.getElementById('field1').value;
+            const selectedCountries = Array.from(document.getElementById('field2').selectedOptions).map(option => option.value);
+            const selectedMode = document.getElementById('mode').value;
+            
+            let dropdown = document.getElementById('field2');
+            // console.log("Selected Graph:", selectedGraph);
+            // console.log("Selected Mode:", selectedMode);
+
+            if (selectedMode === 'region') {
+                // Render region-specific visualization
+                Promise.all([
+                    fetch('./jsonFiles/countryregions.json').then(response => response.json())
+                ]).then(jsonData => {
+                    data = jsonData[0];
+                    var currentRegion = countryToRegion[countryParam];
+                    console.log("region", currentRegion)
+                    // setSelectedOptions(dropdown, currentRegion);
+                    populateRightPanel(data[selectedCountries], yearParam);
+                    renderLineGraph(selectedGraph, data[selectedCountries]);
+                });
+            // console.log("here", selectedCountries)
+            }else {
+                populateRightPanel(selectedCountries, yearParam);
+                renderLineGraph(selectedGraph, selectedCountries);
+            }
+        }
+
+
+
+
+        function renderRegionVisualization(selectedGraph) {
+            // Add your logic for rendering region-specific visualization here
+            // You may need to fetch data specific to regions and update the visualization accordingly
+            console.log("Render Region Visualization: ", selectedGraph);
+        }
+        console.log("start")
+
+        // Load in inital dropdown menu
+        // readJSONFile('./jsonFiles/countryRegions.json', jsonData => populateDropdown(jsonData, "region"));
+        handleModeChange();
+
+
+        //Loading the right panel
+        async function loadData() {
+            countryNameData = await d3.json("./jsonFiles/countryCodeMapper.json")
+            populationByCountry = await d3.json("./jsonFiles/countryPopulation.json")
+            internetUsageByCountry = await d3.json("./jsonFiles/internetUsageTemp.json")
+            countryToRegion = await d3.json("./jsonFiles/countryToRegions.json")
+
+            console.log("populationByCountry:", populationByCountry);
+            console.log("internetUsageByCountry:", internetUsageByCountry);
+        }
+
+        loadData()
+        function populateRightPanel(selectedCountries, year) {
+            // Calculate internet usage percentages
+            const percents = calculateInternetUsagePercentage(selectedCountries, year);
+
+            // Get the statistic-container div
+            const statisticContainer = document.getElementById("statistic-container");
+
+            // Clear existing content
+            statisticContainer.innerHTML = "";
+
+            // Add the header
+            const header = document.createElement("h4");
+            header.textContent = "Access to Internet %:";
+            statisticContainer.appendChild(header);
+
+            // Add percentages for each country
+            for (const countryName in percents) {
+                const percentage = percents[countryName];
+
+                const h6 = document.createElement("h6");
+                h6.textContent = `${countryName}: ${percentage}%`;
+                statisticContainer.appendChild(h6);
+            }
+        }
+
+        function calculateInternetUsagePercentage(selectedCountries, year) {
+            const internetUsagePercentage = {};
+            console.log("selected countries:", selectedCountries)
+            selectedCountries.forEach(countryCode => {
+                console.log("POP", populationByCountry)
+                console.log("POP", populationByCountry[countryCode])
+                console.log("year", year)
+                let countryName = countryNameData[countryCode];
+                let population = populationByCountry[countryCode][year];
+                let internetUsers = internetUsageByCountry[countryCode][year];
+                console.log("POP", population)
+                console.log("INT users:,", internetUsers)
+                if (population !== 0) {
+                    const percentage = (internetUsers / population) * 100;
+                    internetUsagePercentage[countryName] = percentage.toFixed(2); // Rounded to 2 decimal places
+                } else {
+                    internetUsagePercentage[countryName] = "N/A"; // Handle the case where population is 0
+                }
+            });
+
+            return internetUsagePercentage;
+        }
+
+        // Function to get URL parameters by name
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Get country and year from URL
+        var countryParam = getParameterByName('country');
+        var yearParam = getParameterByName('year');
+
+        
+
+        // function setSelectedOptions(selectElement, values) {
+        //     // Clear previous selections
+        //     $(selectElement).multiselect('deselectAll', false);
+
+        //     // Set the selected options
+        //     values.forEach(value => {
+        //         $(selectElement).multiselect('select', value);
+        //     });
+
+        //     // Update the button text and refresh the dropdown
+        //     $(selectElement).multiselect('updateButtonText');
+        //     const dropdown = document.querySelector('.multiselect-dropdown');
+        //     if (dropdown) {
+        //         dropdown.refresh();
+        //     }
+        // }
+
+
+
     </script>
 </body>
 
 </html>
+

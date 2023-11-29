@@ -1,0 +1,24 @@
+{
+    "North America": ["CAN", "USA", "MEX"],
+    "Northern Europe": ["DNK", "EST", "FIN", "ISL", "LVA", "LTU", "NOR", "SWE"],
+    "Eastern Europe": ["BLR", "BGR", "CZE", "HUN", "MDA", "POL", "ROU", "RUS", "SVK", "UKR"],
+    "Northern Africa": ["DZA", "EGY", "LBY", "MAR", "SDN", "TUN"],
+    "East Asia": ["CHN", "HKG", "JPN", "KOR", "MAC", "MNG", "PRK", "TWN"],
+    
+    "Central America": ["BLZ", "CRI", "SLV", "GTM", "HND", "NIC", "PAN", "CUW"],
+    "Caribbean": ["ATG", "BHS", "BRB", "DMA", "DOM", "GRD", "HTI", "JAM", "KNA", "LCA", "VCT", "TTO", "VIR"],
+    "South America": ["ARG", "BOL", "BRA", "CHL", "COL", "ECU", "GUY", "PRY", "PER", "SUR", "URY", "VEN", "GUF"],
+    "Southern Europe": ["ALB", "BIH", "HRV", "GRC", "ITA", "MNE", "MKD", "PRT", "ESP", "SVN"],
+    "Southern Africa": ["BWA", "LSO", "NAM", "ZAF", "SWZ", "ZMB", "ZWE"],
+    
+    "Middle East": ["ARE", "BHR", "IRN", "IRQ", "ISR", "JOR", "KWT", "LBN", "OMN", "QAT", "SAU", "SYR", "TUR", "YEM", "PSE"],
+    "Central Asia": ["KAZ", "KGZ", "TJK", "TKM", "UZB"],
+    "South Asia": ["AFG", "BGD", "BTN", "IND", "MDV", "NPL", "PAK", "LKA"],
+    "Southeast Asia": ["BRN", "KHM", "IDN", "LAO", "MYS", "MMR", "PHL", "SGP", "THA", "TLS", "VNM"],
+    
+    "Western Europe": ["AUT", "BEL", "FRA", "DEU", "LUX", "NLD", "CHE", "GBR", "IRL"],
+    "Central Africa": ["AGO", "CMR", "CAF", "TCD", "COG", "GNQ", "GAB", "STP"],
+    "Eastern Africa": ["BDI", "COM", "DJI", "ERI", "ETH", "KEN", "MDG", "MWI", "MUS", "RWA", "SYC", "SOM", "SSD", "UGA", "TZA"],
+    "West Africa": ["BEN", "BFA", "CPV", "CIV", "GHA", "GIN", "GNB", "LBR", "MLI", "MRT", "NER", "NGA", "SEN", "SLE", "TGO"]
+  }
+  
