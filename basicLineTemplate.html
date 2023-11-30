@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Line Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .grid line {
+            stroke: lightgray;
+            stroke-opacity: 0.7; /* Adjust the opacity of the grid lines */
+        }
+    </style>
+</head>
+<body>
+    <svg width="960" height="500"></svg>
+    <script>
+
+        let data, countryNames;
+
+        // Read data from JSON files
+        Promise.all([
+            fetch('./jsonFiles/averageYearsOfSchool.json').then(response => response.json()),
+            fetch('./jsonFiles/countryCodeMapper.json').then(response => response.json())
+        ]).then(jsonData => {
+            data = jsonData[0];
+            countryNames = jsonData[1];
+
+            const svg = d3.select("svg"),
+                margin = { top: 50, right: 80, bottom: 30, left: 50 }, // Adjusted top margin for the title
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom,
+                g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            const x = d3.scaleLinear().range([0, width]);
+            const y = d3.scaleLinear().range([height, 0]);
+
+            const line = d3.line()
+                .x(function(d) { return x(d.year); })
+                .y(function(d) { return y(d.value); });
+
+            const countries = Object.keys(data).slice(0, 3); // Getting only the first three countries
+
+            const color = d3.scaleOrdinal(d3.schemeCategory10); // Using a categorical color scale
+
+            const allData = countries.map(country => Object.keys(data[country]).map(year => ({ year: +year, value: data[country][year] }))).flat();
+
+            x.domain(d3.extent(allData, function(d) { return d.year; }));
+            y.domain([0, d3.max(allData, function(d) { return d.value; })]);
+
+            // Add the chart title
+            svg.append("text")
+                .attr("x", (width + margin.left + margin.right) / 2)
+                .attr("y", margin.top / 2)
+                .attr("text-anchor", "middle")
+                .style("font-size", "24px")
+                .text("Average Years of School");
+
+            // Add the X Axis
+            g.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+
+            // Add the Y Axis
+            g.append("g")
+                .call(d3.axisLeft(y));
+
+            // Add the background lines
+            g.append("g")
+                .attr("class", "grid")
+                .call(d3.axisLeft(y)
+                    .tickSize(-width)
+                    .tickFormat("")
+                );
+
+            countries.forEach(function(country, index) {
+                const countryData = Object.keys(data[country]).map(function(year) {
+                    return { year: +year, value: data[country][year] };
+                });
+
+                g.append("path")
+                    .datum(countryData)
+                    .attr("fill", "none")
+                    .attr("stroke", color(index)) // Setting different colors for each line
+                    .attr("stroke-linejoin", "round")
+                    .attr("stroke-linecap", "round")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", line);
+
+                g.append("text")
+                    .attr("transform", "translate(" + (width + 3) + "," + (y(countryData[countryData.length - 1].value)) + ")")
+                    .attr("dy", "0.35em")
+                    .attr("text-anchor", "start")
+                    .style("fill", color(index)) // Setting the text color to match the line
+                    .text(countryNames[country]);
+            });
+        });
+
+    </script>
+</body>
+</html>
